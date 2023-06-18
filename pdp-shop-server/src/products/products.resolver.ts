@@ -1,6 +1,6 @@
 import { Resolver, Query, Args, Int, Mutation } from "@nestjs/graphql";
 import { ProductsService } from "./products.service";
-import { CreateProductInput, UpdateProductInput } from "./dtos/product.dto";
+import { AddToFavoritesDTO, CreateProductDTO, UpdateProductDTO } from "./dtos/product.dto";
 import { Product } from "./models/product";
 import { UpdateResponse } from "src/shared/models/update-response";
 
@@ -26,14 +26,19 @@ export class ProductsResolver {
     }
 
     @Mutation(returns => UpdateResponse)
-    async updateProduct(@Args('product') product: UpdateProductInput) {
+    async updateProduct(@Args('product') product: UpdateProductDTO) {
         await this.productsService.updateProduct(product);
         return new UpdateResponse();
     }
 
     @Mutation(returns => Product)
-    async createProduct(@Args('product') product: CreateProductInput) {
-        console.log('createProduct', product);
+    async createProduct(@Args('product') product: CreateProductDTO) {
         return this.productsService.createProduct(product);
+    }
+
+    @Mutation(returns => UpdateResponse)
+    async addToFavorites(@Args('like') like: AddToFavoritesDTO) {
+        await this.productsService.addToFavorites(like);
+        return new UpdateResponse();
     }
 }

@@ -1,15 +1,18 @@
-import { InputType, Field } from "@nestjs/graphql";
+import { InputType, Field, Int } from "@nestjs/graphql";
 
 @InputType()
-export class CreateOrderInput {
+export class CreateOrderDTO {
     @Field(type => String)
-    address: string;
+    address?: string = 'unknown';
 
     @Field(type => String)
-    customerId: string;
+    customerId?: string;
 
     @Field(type => [OrderPosition])
-    positions: OrderPosition[]
+    positions: OrderPosition[];
+
+    @Field(type => Int)
+    totalPrice?: number = 0;
 }
 
 @InputType()
@@ -23,13 +26,13 @@ export class OrderPosition {
     @Field(type => String)
     productId: string;
 
-    @Field(type => String)
-    price: string;
+    @Field(type => Int)
+    price: number;
 }
 
 
 @InputType()
-export class CreateOrderPositionInput {
+export class CreateOrderPositionDTO {
     @Field(type => String)
     size: string;
 

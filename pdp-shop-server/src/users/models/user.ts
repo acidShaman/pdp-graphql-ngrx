@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, ManyToMany, ManyToOne, BeforeInsert, BeforeUpdate } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, ManyToMany, ManyToOne, BeforeInsert, BeforeUpdate, JoinTable } from "typeorm";
 import { Product } from "../../products/models/product";
 import { Order } from "src/orders/models/order";
 import { Field, Int, ObjectType } from "@nestjs/graphql";
@@ -42,7 +42,7 @@ export class User {
 
     @Field(type => String)
     @Column('varchar', { length: 2000 })
-    password: string;
+    pass: string;
 
     @Field(type => String)
     @Column('text', { nullable: false })
@@ -53,11 +53,20 @@ export class User {
     imageUrl: string;
 
     @Field(type => [Product])
-    @ManyToMany(type => Product, product => product.likedByUsers)
+    @ManyToMany(
+        type => Product, 
+        product => product.likedByUsers
+    )
+    @JoinTable({
+        name: 'users_products_favorites',
+    })
     favorites: Product[];
 
     @Field(type => [Order])
-    @ManyToOne(type => Order, order => order.customer)
+    @OneToMany(
+        type => Order, 
+        order => order.customer
+    )
     orders: Order[];
 
     @Field(type => String)
@@ -69,21 +78,4 @@ export class User {
     @Column()
     @UpdateDateColumn()
     updatedAt: Date;
-
-    @BeforeInsert()
-    @BeforeUpdate()
-    async hashPassword() {
-        if (this.password) {
-            const saltRounds = 10;
-            this.password = await bcrypt.hash(this.password, saltRounds);
-        }
-    }
-
-    @BeforeInsert()
-    @BeforeUpdate()
-    parseDate() {
-        if (this.birthDate) {
-            this.birthDate = new Date(this.birthDate);
-        }
-    }
 }

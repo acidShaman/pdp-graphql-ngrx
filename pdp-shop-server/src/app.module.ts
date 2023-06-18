@@ -12,6 +12,12 @@ import { OrdersModule } from './orders/orders.module';
 import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { Order } from './orders/models/order';
+import { GraphQLJSON } from 'graphql-scalars';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from './shared/constants/jwt';
+import { JwtStrategy } from './shared/strategies/jwt.strategy';
+
+
 
 @Module({
     imports: [
@@ -42,12 +48,23 @@ import { Order } from './orders/models/order';
                 ProductsModule,
                 OrdersModule
             ],
+            resolvers: { JSON: GraphQLJSON },
             driver: ApolloDriver,
             playground: true,
             autoSchemaFile: true,
         }),
+        JwtModule.register({
+            secret: jwtConstants.secret,
+            signOptions: { expiresIn: '3600s' },
+        }),
+
     ],
-    controllers: [AppController],
-    providers: [AppService],
+    exports: [
+        JwtModule
+    ],
+    providers: [
+        AppService,
+        JwtStrategy,
+    ],
 })
 export class AppModule { }

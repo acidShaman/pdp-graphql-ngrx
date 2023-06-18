@@ -1,6 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { OrdersService } from './orders.service';
-import { CreateOrderInput } from './dtos/order.dto';
+import { CreateOrderDTO } from './dtos/order.dto';
 import { Order } from './models/order';
 
 @Resolver(of => Order)
@@ -25,13 +25,13 @@ export class OrdersResolver {
     }
 
     // @Mutation(returns => UpdateResponse)
-    // async updateOrder(@Args('product') product: UpdateOrderInput) {
+    // async updateOrder(@Args('product') product: UpdateOrderDTO) {
     //     await this.ordersService.updateOrder(product);
     //     return new UpdateResponse();
     // }
 
     @Mutation(returns => Order)
-    async createOrder(@Args('product') product: CreateOrderInput) {
-        return this.ordersService.createOrder(product);
+    async createOrder(@Args('order') order: CreateOrderDTO) {
+        return await this.ordersService.createOrder(order);
     }
 }

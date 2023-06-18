@@ -2,7 +2,9 @@ import { OrderStatus } from "src/shared/enums/order-status";
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from "typeorm";
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { User } from "src/users/models/user";
-import { OrderPosition } from "../dtos/order.dto";
+import { CreateOrderDTO, OrderPosition } from "../dtos/order.dto";
+import GraphQLJSON from "graphql-type-json";
+import { CreateCategoryDTO } from "src/categories/dtos/category.dto";
 
 @ObjectType()
 @Entity()
@@ -29,15 +31,18 @@ export class Order {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @Field(type => String)
-    @Column('varchar', { length: 30 })
-    totalPrice: string;
+    @Field(type => Int)
+    @Column('int', {
+        default: 0
+    })
+    totalPrice: number;
 
     @Field(type => String)
     @Column('text')
     address: string;
 
-    @OneToMany(type => User, user => user.orders)
+    @Field(type => User)
+    @ManyToOne(() => User, (user: User) => user.orders)
     customer: User;
 
     @Field(type => String)
@@ -48,7 +53,9 @@ export class Order {
     })
     customerId: string;
 
-    @Field(type => String, { nullable: true })
-    @Column('jsonb', { nullable: true })
-    positions: OrderPosition[];
+    @Field(type => GraphQLJSON)
+    @Column('json', {
+        nullable: true,
+    })
+    positions: JSON;
 }

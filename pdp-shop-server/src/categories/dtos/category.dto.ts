@@ -1,7 +1,7 @@
 import { InputType, Field } from "@nestjs/graphql";
 
 @InputType()
-export class CreateCategoryInput {
+export class CreateCategoryDTO {
     @Field()
     name: string;
 
@@ -10,7 +10,7 @@ export class CreateCategoryInput {
 }
 
 @InputType()
-export class UpdateCategoryInput {
+export class UpdateCategoryDTO {
     @Field()
     id: string;
 

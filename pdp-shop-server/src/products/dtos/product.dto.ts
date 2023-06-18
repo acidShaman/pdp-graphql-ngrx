@@ -1,7 +1,7 @@
 import { InputType, Field } from "@nestjs/graphql";
 
 @InputType()
-export class CreateProductInput {
+export class CreateProductDTO {
     @Field()
     name: string;
 
@@ -28,7 +28,7 @@ export class CreateProductInput {
 }
 
 @InputType()
-export class UpdateProductInput {
+export class UpdateProductDTO {
     @Field()
     id: string;
 
@@ -55,4 +55,13 @@ export class UpdateProductInput {
 
     @Field(() => [String])
     colors?: string[];
+}
+
+@InputType()
+export class AddToFavoritesDTO {
+    @Field()
+    productId: string;
+
+    @Field()
+    userId: string;
 }

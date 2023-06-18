@@ -2,7 +2,11 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User } from './models/user';
 import { UsersService } from './users.service';
 import { UpdateResponse } from 'src/shared/models/update-response';
-import { CreateUserInput } from './dtos/user.dtos';
+import { CreateUserDTO, LoginDTO } from './dtos/user.dtos';
+import { UseGuards } from '@nestjs/common';
+import { LocalAuthGuard } from 'src/shared/guards/local-auth.guard';
+import { GqlAuthGuard } from 'src/shared/guards/gql-auth.guard';
+import { LoginSuccessDTO } from 'src/shared/models/login-success';
 
 @Resolver(of => User)
 export class UsersResolver {
@@ -10,6 +14,14 @@ export class UsersResolver {
         private usersService: UsersService,
     ) { }
 
+    @Query(returns => LoginSuccessDTO)
+    async login(@Args('login') login: LoginDTO) {
+        const res = new LoginSuccessDTO();
+        res.token = await this.usersService.login(login);
+        return res
+    }
+
+    @UseGuards(GqlAuthGuard)
     @Query(returns => [User])
     async allUsers() {
         return this.usersService.findAll();
@@ -17,12 +29,13 @@ export class UsersResolver {
 
     @Query(returns => User)
     async userById(@Args('id', { type: () => String }) id: string) {
-        return this.usersService.findById(id);
+        const user = await this.usersService.findById(id);
+        console.log(user);
+        return user;
     }
 
     @Mutation(returns => User)
-    async createUser(@Args('user') user: CreateUserInput) {
-        console.log(user);
+    async createUser(@Args('user') user: CreateUserDTO) {
         return await this.usersService.create(user);
     }
 }

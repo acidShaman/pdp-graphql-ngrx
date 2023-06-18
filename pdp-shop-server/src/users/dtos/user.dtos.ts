@@ -2,7 +2,7 @@ import { Field, InputType } from "@nestjs/graphql";
 import { UserRole } from "src/shared/enums/role";
 
 @InputType()
-export class CreateUserInput {
+export class CreateUserDTO {
     @Field()
     name: string;
 
@@ -13,7 +13,7 @@ export class CreateUserInput {
     address: string;
 
     @Field()
-    password: string;
+    pass: string;
 
     @Field()
     phone: string;
@@ -26,7 +26,16 @@ export class CreateUserInput {
 }
 
 @InputType()
-export class UpdateUserInput {
+export class LoginDTO {
+    @Field()
+    email: string;
+
+    @Field()
+    pass: string;
+}
+
+@InputType()
+export class UpdateUserDTO {
     @Field()
     name: string;
 
@@ -37,7 +46,7 @@ export class UpdateUserInput {
     address: string;
 
     @Field()
-    password: string;
+    pass: string;
 
     @Field()
     phone: string;
