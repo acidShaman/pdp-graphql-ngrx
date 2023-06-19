@@ -1,5 +1,5 @@
 import { ConflictException, Injectable, UnauthorizedException, UseGuards } from '@nestjs/common';
-import { User } from './models/user';
+import { User, UserWithToken } from './models/user';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDTO, LoginDTO } from './dtos/user.dtos';
@@ -15,10 +15,14 @@ export class UsersService {
     ) { }
 
 
-    async login({email, pass}: LoginDTO): Promise<string> {
+    async login({email, pass}: LoginDTO): Promise<UserWithToken> {
         const user = await this.validateUser(email, pass);
         if (!user) throw new UnauthorizedException('Wrong email or pass');
-        return this.jwtService.sign({ email: user.email, sub: user.id });
+        const userWithToken = {
+            ...user,
+            token: this.jwtService.sign({ email: user.email, sub: user.id })
+        }
+        return userWithToken;
     }
 
     findAll(): Promise<User[]> {

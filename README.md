@@ -17,9 +17,9 @@ TODO:
  - [x] fix relations
  - [x] createOrder
  Front:
- - login
- - register
- - main page with all products by category
- - add/edit product page
- - add/edit category page
- - confirm order
+ - [ ] login
+ - [ ] register
+ - [ ] main page with all products by category
+ - [ ] add/edit product page
+ - [ ] add/edit category page
+ - [ ] confirm order

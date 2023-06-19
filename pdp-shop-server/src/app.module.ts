@@ -16,6 +16,7 @@ import { GraphQLJSON } from 'graphql-scalars';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './shared/constants/jwt';
 import { JwtStrategy } from './shared/strategies/jwt.strategy';
+import { GqlAuthGuard } from './shared/guards/gql-auth.guard';
 
 
 
@@ -55,7 +56,7 @@ import { JwtStrategy } from './shared/strategies/jwt.strategy';
         }),
         JwtModule.register({
             secret: jwtConstants.secret,
-            signOptions: { expiresIn: '3600s' },
+            signOptions: { expiresIn: '7d' },
         }),
 
     ],
@@ -65,6 +66,7 @@ import { JwtStrategy } from './shared/strategies/jwt.strategy';
     providers: [
         AppService,
         JwtStrategy,
+        GqlAuthGuard
     ],
 })
 export class AppModule { }

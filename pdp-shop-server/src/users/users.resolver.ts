@@ -1,5 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { User } from './models/user';
+import { User, UserWithToken } from './models/user';
 import { UsersService } from './users.service';
 import { UpdateResponse } from 'src/shared/models/update-response';
 import { CreateUserDTO, LoginDTO } from './dtos/user.dtos';
@@ -14,14 +14,13 @@ export class UsersResolver {
         private usersService: UsersService,
     ) { }
 
-    @Query(returns => LoginSuccessDTO)
+    @Query(returns => UserWithToken)
     async login(@Args('login') login: LoginDTO) {
-        const res = new LoginSuccessDTO();
-        res.token = await this.usersService.login(login);
-        return res
+        const user = await this.usersService.login(login);
+        console.log(user)
+        return user;
     }
 
-    @UseGuards(GqlAuthGuard)
     @Query(returns => [User])
     async allUsers() {
         return this.usersService.findAll();

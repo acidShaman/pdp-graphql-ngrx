@@ -1,23 +1,34 @@
 import { AuthenticationError } from "@nestjs/apollo";
-import { Injectable, ExecutionContext } from "@nestjs/common";
+import { Injectable, ExecutionContext, ConsoleLogger, UnauthorizedException, CanActivate } from "@nestjs/common";
 import { ExecutionContextHost } from "@nestjs/core/helpers/execution-context-host";
 import { GqlExecutionContext } from "@nestjs/graphql";
+import { JwtService } from "@nestjs/jwt";
 import { AuthGuard } from "@nestjs/passport";
+import { jwtConstants } from "../constants/jwt";
+import { error } from "console";
 
 @Injectable()
-export class GqlAuthGuard extends AuthGuard('jwt') {
-  canActivate(context: ExecutionContext) {
+export class GqlAuthGuard implements CanActivate {
+  constructor(private jwtService: JwtService) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest();
     const ctx = GqlExecutionContext.create(context);
-    const { req } = ctx.getContext();
-    console.log(req);
-
-    return super.canActivate(new ExecutionContextHost([req]));
-  }
-
-  handleRequest(err: any, user: any) {
-    if (err || !user) {
-      throw err || new AuthenticationError('GqlAuthGuard');
+    const token = ctx.getArgByIndex(2).req.headers.authorization.split(' ')[1];
+    if (!token) {
+      throw new UnauthorizedException();
     }
-    return user;
+    try {
+      const payload = await this.jwtService.verifyAsync(
+        token,
+        {
+          secret: jwtConstants.secret
+        }
+      );
+      request['user'] = payload;
+    } catch (error) {
+      throw error;
+    }
+    return true;
   }
 }

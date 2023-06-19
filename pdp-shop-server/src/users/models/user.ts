@@ -52,7 +52,7 @@ export class User {
     @Column('text', { nullable: false })
     imageUrl: string;
 
-    @Field(type => [Product])
+    @Field(type => [Product], {nullable: true})
     @ManyToMany(
         type => Product, 
         product => product.likedByUsers
@@ -60,14 +60,14 @@ export class User {
     @JoinTable({
         name: 'users_products_favorites',
     })
-    favorites: Product[];
+    favorites?: Product[];
 
-    @Field(type => [Order])
+    @Field(type => [Order], {nullable: true})
     @OneToMany(
         type => Order, 
         order => order.customer
     )
-    orders: Order[];
+    orders?: Order[];
 
     @Field(type => String)
     @Column()
@@ -78,4 +78,10 @@ export class User {
     @Column()
     @UpdateDateColumn()
     updatedAt: Date;
+}
+
+@ObjectType()
+export class UserWithToken extends User {
+    @Field(type => String)
+    token: string;
 }

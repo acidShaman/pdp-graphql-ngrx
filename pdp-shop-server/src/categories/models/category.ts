@@ -18,9 +18,9 @@ export class Category {
     @Column('text', { nullable: true })
     imageUrl: string;
 
-    // @Field(type => [Product])
+    @Field(type => [Product], {nullable: true})
     @OneToMany(type => Product, product => product.category)
-    products: Product;
+    products: Product[];
     
     @Field(type => String)
     @Column()

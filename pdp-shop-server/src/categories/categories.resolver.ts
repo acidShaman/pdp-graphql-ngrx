@@ -4,6 +4,8 @@ import { UpdateResult } from "typeorm";
 import { UpdateCategoryDTO, CreateCategoryDTO } from "./dtos/category.dto";
 import { Category } from "./models/category";
 import { UpdateResponse } from "src/shared/models/update-response";
+import { UseGuards } from "@nestjs/common";
+import { GqlAuthGuard } from "src/shared/guards/gql-auth.guard";
 
 @Resolver(of => Category)
 export class CategoriesResolver {
